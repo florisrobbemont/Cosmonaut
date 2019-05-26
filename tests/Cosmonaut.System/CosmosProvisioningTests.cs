@@ -1,9 +1,12 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Threading.Tasks;
 using Cosmonaut.Configuration;
+using Cosmonaut.Exceptions;
 using Cosmonaut.Storage;
 using Cosmonaut.System.Models;
 using FluentAssertions;
+using Microsoft.Azure.Documents;
 using Microsoft.Azure.Documents.Client;
 using Xunit;
 
@@ -151,6 +154,47 @@ namespace Cosmonaut.System
 
             databaseOffer.Content.OfferThroughput.Should().Be(20000);
             collectionOffer.Content.OfferThroughput.Should().Be(10000);
+        }
+
+        [Fact]
+        public void CosmosStoreSettings_CreatesCollectionWithUniqueKeyPolicy_WhenEntityHasSharedCollection()
+        {
+            var cosmosStoreSettings = new CosmosStoreSettings(_databaseId, _emulatorUri, _emulatorKey, settings =>
+                                                                                                       {
+                                                                                                           settings.ProvisionInfrastructureIfMissing = true;
+                                                                                                           settings.ConnectionPolicy = _connectionPolicy;
+                                                                                                           settings.UniqueKeyPolicy = new UniqueKeyPolicy
+                                                                                                                                      {
+                                                                                                                                          UniqueKeys =
+                                                                                                                                          {
+                                                                                                                                              new UniqueKey
+                                                                                                                                              {
+                                                                                                                                                  Paths =
+                                                                                                                                                  {
+                                                                                                                                                      "/name"
+                                                                                                                                                  }
+                                                                                                                                              }
+                                                                                                                                          }
+                                                                                                                                      };
+                                                                                                       });
+
+            var action = new Action(() => new CosmosStore<Lion>(cosmosStoreSettings));
+
+            action.Should().Throw<SharedEntityCanNotHaveUniqueKeyPolicy>();
+        }
+
+         [Fact]
+        public void CosmosStoreSettings_CreatesCollectionWithSharedEntity_WhenNoUniqueKeyPolicyIsDefined()
+        {
+            var cosmosStoreSettings = new CosmosStoreSettings(_databaseId, _emulatorUri, _emulatorKey, settings =>
+                                                                                                       {
+                                                                                                           settings.ProvisionInfrastructureIfMissing = true;
+                                                                                                           settings.ConnectionPolicy = _connectionPolicy;
+                                                                                                       });
+
+            var action = new Action(() => new CosmosStore<Lion>(cosmosStoreSettings));
+
+            action.Should().NotThrow<SharedEntityCanNotHaveUniqueKeyPolicy>();
         }
 
         public void Dispose()

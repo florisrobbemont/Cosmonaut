@@ -20,6 +20,8 @@ namespace Cosmonaut
 
         public IndexingPolicy IndexingPolicy { get; set; } = CosmosConstants.DefaultIndexingPolicy;
 
+        public UniqueKeyPolicy UniqueKeyPolicy { get; set; } = CosmosConstants.DefaultUniqueKeyPolicy;
+
         public int DefaultCollectionThroughput { get; set; } =  CosmosConstants.MinimumCosmosThroughput;
 
         public int? DefaultDatabaseThroughput { get; set; }
@@ -58,13 +60,15 @@ namespace Cosmonaut
             string authKey,
             ConnectionPolicy connectionPolicy = null,
             IndexingPolicy indexingPolicy = null,
-            int defaultCollectionThroughput = CosmosConstants.MinimumCosmosThroughput)
+            int defaultCollectionThroughput = CosmosConstants.MinimumCosmosThroughput,
+            UniqueKeyPolicy uniqueKeyPolicy = null)
             : this(databaseName, 
                   new Uri(endpointUrl), 
                   authKey,
                   connectionPolicy,
                   indexingPolicy,
-                  defaultCollectionThroughput)
+                  defaultCollectionThroughput,
+                  uniqueKeyPolicy)
         {
         }
         
@@ -74,7 +78,8 @@ namespace Cosmonaut
             string authKey,
             ConnectionPolicy connectionPolicy = null,
             IndexingPolicy indexingPolicy = null,
-            int defaultCollectionThroughput = CosmosConstants.MinimumCosmosThroughput)
+            int defaultCollectionThroughput = CosmosConstants.MinimumCosmosThroughput,
+            UniqueKeyPolicy uniqueKeyPolicy = null)
         {
             DatabaseName = databaseName ?? throw new ArgumentNullException(nameof(databaseName));
             EndpointUrl = endpointUrl ?? throw new ArgumentNullException(nameof(endpointUrl));
@@ -83,6 +88,7 @@ namespace Cosmonaut
             DefaultCollectionThroughput = defaultCollectionThroughput;
 
             IndexingPolicy = indexingPolicy ?? CosmosConstants.DefaultIndexingPolicy;
+            UniqueKeyPolicy = uniqueKeyPolicy ?? CosmosConstants.DefaultUniqueKeyPolicy;
         }
     }
 }

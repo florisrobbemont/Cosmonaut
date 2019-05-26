@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.ComponentModel;
 using System.Threading.Tasks;
 using Cosmonaut.Configuration;
@@ -157,7 +157,7 @@ namespace Cosmonaut.System
         }
 
         [Fact]
-        public void CosmosStoreSettings_CreatesCollectionWithUniqueKeyPolicy_WhenEntityHasSharedCollection()
+        public async Task CosmosStoreSettings_CreatesCollectionWithUniqueKeyPolicy()
         {
             var cosmosStoreSettings = new CosmosStoreSettings(_databaseId, _emulatorUri, _emulatorKey, settings =>
                                                                                                        {
@@ -171,20 +171,22 @@ namespace Cosmonaut.System
                                                                                                                                               {
                                                                                                                                                   Paths =
                                                                                                                                                   {
-                                                                                                                                                      "/name"
+                                                                                                                                                      "/name",
+                                                                                                                                                      "/bladiebla"
                                                                                                                                                   }
                                                                                                                                               }
                                                                                                                                           }
                                                                                                                                       };
                                                                                                        });
 
-            var action = new Action(() => new CosmosStore<Lion>(cosmosStoreSettings));
+            var store = new CosmosStore<Lion>(cosmosStoreSettings);
+            var collection = await store.CosmonautClient.GetCollectionAsync(_databaseId, store.CollectionName);
 
-            action.Should().Throw<SharedEntityCanNotHaveUniqueKeyPolicy>();
+            collection.UniqueKeyPolicy.UniqueKeys.Should().HaveCount(1);
         }
 
          [Fact]
-        public void CosmosStoreSettings_CreatesCollectionWithSharedEntity_WhenNoUniqueKeyPolicyIsDefined()
+        public async Task CosmosStoreSettings_CreatesCollectionWithSharedEntity_WhenNoUniqueKeyPolicyIsDefined()
         {
             var cosmosStoreSettings = new CosmosStoreSettings(_databaseId, _emulatorUri, _emulatorKey, settings =>
                                                                                                        {
@@ -192,9 +194,10 @@ namespace Cosmonaut.System
                                                                                                            settings.ConnectionPolicy = _connectionPolicy;
                                                                                                        });
 
-            var action = new Action(() => new CosmosStore<Lion>(cosmosStoreSettings));
+            var store = new CosmosStore<Lion>(cosmosStoreSettings);
+            var collection = await store.CosmonautClient.GetCollectionAsync(_databaseId, store.CollectionName);
 
-            action.Should().NotThrow<SharedEntityCanNotHaveUniqueKeyPolicy>();
+            collection.UniqueKeyPolicy.UniqueKeys.Should().HaveCount(0);
         }
 
         public void Dispose()

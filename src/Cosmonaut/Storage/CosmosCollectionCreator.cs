@@ -46,11 +46,6 @@ namespace Cosmonaut.Storage
 
             SetPartitionKeyDefinitionForCollection(typeof(TEntity), newCollection);
 
-            if (typeof(TEntity).UsesSharedCollection() && uniqueKeyPolicy?.UniqueKeys.Any() == true)
-            {
-                throw new SharedEntityCanNotHaveUniqueKeyPolicy(typeof(TEntity));
-            }
-
             var finalCollectionThroughput = databaseHasOffer ? onDatabaseBehaviour == ThroughputBehaviour.DedicateCollectionThroughput ? (int?)collectionThroughput : null : collectionThroughput;
 
             newCollection = await _cosmonautClient.CreateCollectionAsync(databaseId, newCollection, new RequestOptions

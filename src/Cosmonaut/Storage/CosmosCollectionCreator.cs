@@ -41,7 +41,7 @@ namespace Cosmonaut.Storage
             {
                 Id = collectionId,
                 IndexingPolicy = indexingPolicy ?? CosmosConstants.DefaultIndexingPolicy,
-                UniqueKeyPolicy = uniqueKeyPolicy
+                UniqueKeyPolicy = uniqueKeyPolicy ?? CosmosConstants.DefaultUniqueKeyPolicy
             };
 
             SetPartitionKeyDefinitionForCollection(typeof(TEntity), newCollection);

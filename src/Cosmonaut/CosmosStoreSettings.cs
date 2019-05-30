@@ -60,15 +60,13 @@ namespace Cosmonaut
             string authKey,
             ConnectionPolicy connectionPolicy = null,
             IndexingPolicy indexingPolicy = null,
-            int defaultCollectionThroughput = CosmosConstants.MinimumCosmosThroughput,
-            UniqueKeyPolicy uniqueKeyPolicy = null)
+            int defaultCollectionThroughput = CosmosConstants.MinimumCosmosThroughput)
             : this(databaseName, 
                   new Uri(endpointUrl), 
                   authKey,
                   connectionPolicy,
                   indexingPolicy,
-                  defaultCollectionThroughput,
-                  uniqueKeyPolicy)
+                  defaultCollectionThroughput)
         {
         }
         
@@ -78,8 +76,7 @@ namespace Cosmonaut
             string authKey,
             ConnectionPolicy connectionPolicy = null,
             IndexingPolicy indexingPolicy = null,
-            int defaultCollectionThroughput = CosmosConstants.MinimumCosmosThroughput,
-            UniqueKeyPolicy uniqueKeyPolicy = null)
+            int defaultCollectionThroughput = CosmosConstants.MinimumCosmosThroughput)
         {
             DatabaseName = databaseName ?? throw new ArgumentNullException(nameof(databaseName));
             EndpointUrl = endpointUrl ?? throw new ArgumentNullException(nameof(endpointUrl));
@@ -88,7 +85,7 @@ namespace Cosmonaut
             DefaultCollectionThroughput = defaultCollectionThroughput;
 
             IndexingPolicy = indexingPolicy ?? CosmosConstants.DefaultIndexingPolicy;
-            UniqueKeyPolicy = uniqueKeyPolicy ?? CosmosConstants.DefaultUniqueKeyPolicy;
+            UniqueKeyPolicy = CosmosConstants.DefaultUniqueKeyPolicy;
         }
     }
 }

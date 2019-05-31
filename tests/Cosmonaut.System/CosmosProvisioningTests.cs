@@ -160,24 +160,24 @@ namespace Cosmonaut.System
         public async Task CosmosStoreSettings_CreatesCollectionWithUniqueKeyPolicy()
         {
             var cosmosStoreSettings = new CosmosStoreSettings(_databaseId, _emulatorUri, _emulatorKey, settings =>
-                                                                                                       {
-                                                                                                           settings.ProvisionInfrastructureIfMissing = true;
-                                                                                                           settings.ConnectionPolicy = _connectionPolicy;
-                                                                                                           settings.UniqueKeyPolicy = new UniqueKeyPolicy
-                                                                                                                                      {
-                                                                                                                                          UniqueKeys =
-                                                                                                                                          {
-                                                                                                                                              new UniqueKey
-                                                                                                                                              {
-                                                                                                                                                  Paths =
-                                                                                                                                                  {
-                                                                                                                                                      "/name",
-                                                                                                                                                      "/bladiebla"
-                                                                                                                                                  }
-                                                                                                                                              }
-                                                                                                                                          }
-                                                                                                                                      };
-                                                                                                       });
+            {
+                settings.ProvisionInfrastructureIfMissing = true;
+                settings.ConnectionPolicy = _connectionPolicy;
+                settings.UniqueKeyPolicy = new UniqueKeyPolicy
+                                           {
+                                               UniqueKeys =
+                                               {
+                                                   new UniqueKey
+                                                   {
+                                                       Paths =
+                                                       {
+                                                           "/name",
+                                                           "/bladiebla"
+                                                       }
+                                                   }
+                                               }
+                                           };
+            });
 
             var store = new CosmosStore<Lion>(cosmosStoreSettings);
             var collection = await store.CosmonautClient.GetCollectionAsync(_databaseId, store.CollectionName);
